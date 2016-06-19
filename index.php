@@ -2,8 +2,10 @@
 
 require_once 'bootstrap.php';
 
-$master = new Oksis_Master();
+$dir = __DIR__ . '/vendor';
 
-$google = new Oksis_GoogleFacade();
-$google->uploadDir('vendor');
-$google->uploadFile('vendor/autoload.php');
+$master = new Oksis_Master($dir);
+//
+//$google = new Oksis_GoogleFacade();
+//$google->uploadDir('vendor');
+//$google->uploadFile('vendor/autoload.php');
