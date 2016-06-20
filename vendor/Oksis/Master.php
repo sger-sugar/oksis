@@ -16,13 +16,14 @@ class Oksis_Master {
 
     protected function indexDirectory($path) {
 
+        $dirName = basename($path);
         $path = realpath($path) . DIRECTORY_SEPARATOR;
 
         $objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), RecursiveIteratorIterator::SELF_FIRST);
         foreach($objects as $name => $object){ /**@var SplFileInfo $object */
             $basename = $object->getBasename();
             if ($basename != '.' && $basename != '..') {
-                $relativePath = str_replace($path, '', $name);
+                $relativePath = $dirName . DIRECTORY_SEPARATOR . str_replace($path, '', $name);
                 if ($object->isDir()) {
                     $this->directories[$relativePath] = false;
                 } else {
@@ -30,5 +31,11 @@ class Oksis_Master {
                 }
             }
         }
+
+        var_dump($this->directories);
+    }
+
+    public function createDirectories() {
+
     }
 }
