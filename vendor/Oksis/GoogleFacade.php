@@ -13,17 +13,22 @@ class Oksis_GoogleFacade {
         $this->service = new Google_Service_Drive($client);
     }
 
-    public function uploadFile($filePath) {
-        $this->createItem($filePath, false);
+    public function uploadFile($filePath, $parentId=false) {
+        return $this->createItem($filePath, false, $parentId);
     }
 
-    public function uploadDir($filePath) {
-        $this->createItem($filePath, true);
+    public function uploadDir($filePath, $parentId=false) {
+        return $this->createItem($filePath, true, $parentId);
     }
 
-    protected function createItem($filePath, $isDir) {
+    protected function createItem($filePath, $isDir, $parentId=false) {
         $file = new Google_Service_Drive_DriveFile();
         $file->setName(basename($filePath));
+
+        if ($parentId) {
+            $file->setParents(array($parentId));
+        }
+
         if ($isDir) {
             $file->setMimeType('application/vnd.google-apps.folder');
             $createdFile = $this->service->files->create($file, array());
