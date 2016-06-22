@@ -5,13 +5,20 @@ class Oksis_Master {
     protected $directories = array();
     protected $files = array();
 
+    protected $treadCount;
+    protected $packs = array();
+
+    const PACK_SIZE_FILES = 10;
+
     /**
      * @var Oksis_GoogleFacade
      */
     protected $google;
 
-    public function __construct($path)
+    public function __construct($path, $treadCount)
     {
+        $this->treadCount = $treadCount;
+
         if (!is_dir($path)) {
             throw new Exception('Directory ' . $path . ' not exists.');
         }
@@ -58,7 +65,11 @@ class Oksis_Master {
             $parentId = $this->directories[$parent];
             $id = $this->google->uploadDir($dirName, $parentId);
             $this->directories[$path] = $id;
+            echo "$path created" . PHP_EOL;
         }
+
+        $this->fillFileDirectories();
+        $this->makePacks();
     }
 
     public function uploadFiles() {
@@ -68,6 +79,18 @@ class Oksis_Master {
             $parentId = $this->directories[$parent];
             $id = $this->google->uploadFile($path, $parentId);
             $this->files[$path] = $id;
+            echo "$path uploaded" . PHP_EOL;
         }
+    }
+
+    protected function fillFileDirectories() {
+        foreach($this->files as $file => $false) {
+            $fileDir = dirname($file);
+            $this->files[$file] = $this->directories[$fileDir];
+        }
+    }
+
+    protected function makePacks() {
+        $this->packs = array_chunk($this->files, Oksis_Master::PACK_SIZE_FILES, true);
     }
 }
