@@ -11,7 +11,7 @@ $output = array();
 $result = exec('php ./directory.php', $output); // create directories in another process because of libcurl inner bug
 $directories = json_decode($result, true);
 if (!is_array($directories)) {
-    exit('Error in directory.php');
+    exit($result);
 }
 
 echo 'ALL DIRECTORIES CREATED at ' . date('Y-m-d H:i:s') . PHP_EOL;

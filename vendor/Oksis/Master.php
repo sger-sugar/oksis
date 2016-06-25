@@ -14,6 +14,8 @@ class Oksis_Master {
 
     const PACK_SIZE_FILES = 3;
 
+    protected $sharedMemoryResource;
+
     /**
      * @var Oksis_GoogleFacade
      */
@@ -30,6 +32,9 @@ class Oksis_Master {
         $this->indexDirectory($path);
 
         $this->google = new Oksis_GoogleFacade();
+
+        $key = ftok(__FILE__, 'Oksis');
+        $this->sharedMemoryResource = shm_attach($key);
     }
 
     protected function indexDirectory($path) {
@@ -142,5 +147,12 @@ class Oksis_Master {
         }
         $this->forkId = self::MASTER_FORK_ID;
         return self::MASTER_FORK_ID;
+    }
+
+    public function __destruct()
+    {
+        if ($this->forkId == self::MASTER_FORK_ID) {
+            shm_remove($this->sharedMemoryResource);
+        }
     }
 }
