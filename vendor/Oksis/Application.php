@@ -67,7 +67,7 @@ class Oksis_Application {
 
     protected function doMain() {
         $output = array();
-        $file = basename(__FILE__);
+        $file = basename($_SERVER['PHP_SELF']);
         $result = exec('php ./' . $file . ' -d', $output); // create directories in another process because of libcurl inner bug
         $directories = json_decode($result, true);
         if (!is_array($directories)) {
@@ -84,12 +84,12 @@ class Oksis_Application {
             echo 'ALL DIRECTORIES CREATED at ' . date('Y-m-d H:i:s') . PHP_EOL;
         }
 
-        $master = new Oksis_Master($this->getConfigValue('uploadPath'), $this->getConfigValue('threadCount'));
+        $master = new Oksis_FileManager($this->getConfigValue('uploadPath'), $this->getConfigValue('threadCount'));
         $master->setDirectories($directories);
         $master->prepareFiles();
 
         $forkId = $master->forkThreads();
-        if ($forkId == Oksis_Master::MASTER_FORK_ID) {
+        if ($forkId == Oksis_FileManager::MASTER_FORK_ID) {
             $status = null;
             pcntl_wait($status);
             if ($this->mode != self::DISPLAY_MODE_QUIET) {
@@ -103,7 +103,7 @@ class Oksis_Application {
 
     protected function doDirectory() {
 
-        $master = new Oksis_Master($this->getConfigValue('uploadPath'), $this->getConfigValue('threadCount'));
+        $master = new Oksis_FileManager($this->getConfigValue('uploadPath'), $this->getConfigValue('threadCount'));
         $directories = $master->createDirectories();
         exit(json_encode($directories));
     }
