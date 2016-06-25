@@ -73,5 +73,5 @@ function expandHomeDirectory($path) {
 }
 
 require_once __DIR__ . '/vendor/Oksis/GoogleFacade.php';
-require_once __DIR__ . '/vendor/Oksis/Master.php';
+require_once __DIR__ . '/vendor/Oksis/FileManager.php';
 require_once __DIR__ . '/vendor/Oksis/Application.php';
