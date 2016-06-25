@@ -9,6 +9,10 @@ class Oksis_GoogleFacade {
 
     public function __construct()
     {
+        $this->connect();
+    }
+
+    public function connect() {
         $client = getClient();
         $this->service = new Google_Service_Drive($client);
     }

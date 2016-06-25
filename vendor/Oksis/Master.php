@@ -115,6 +115,7 @@ class Oksis_Master {
             } else {
                 // we are the child
                 $this->forkId = $forkId;
+                $this->google = new Oksis_GoogleFacade();
                 return $forkId;
             }
         }
