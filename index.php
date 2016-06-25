@@ -7,9 +7,17 @@ $dir = __DIR__ . '/vendor';
 
 $treadCount = 3;
 
+$output = array();
+$result = exec('php ./directory.php', $output); // create directories in another process because of libcurl inner bug
+$directories = json_decode($result, true);
+if (!is_array($directories)) {
+    exit('Error in directory.php');
+}
+
 $master = new Oksis_Master($dir, $treadCount);
-$master->createDirectories();
-echo 'ALL DIRECTORIES CREATED' . PHP_EOL;
+$master->setDirectories($directories);
+$master->prepareFiles();
+
 $forkId = $master->forkThreads();
 if ($forkId == Oksis_Master::MASTER_FORK_ID) {
     file_put_contents(__DIR__ . DIRECTORY_SEPARATOR . $forkId . '.txt', 'pid');

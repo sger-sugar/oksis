@@ -52,6 +52,10 @@ class Oksis_Master {
         }
     }
 
+    public function setDirectories($directories) {
+        $this->directories = $directories;
+    }
+
     public function createDirectories() {
 
         $rootDirectory = key($this->directories);
@@ -72,6 +76,10 @@ class Oksis_Master {
             echo "$path created" . PHP_EOL;
         }
 
+        return $this->directories;
+    }
+
+    public function prepareFiles() {
         $this->fillFileDirectories();
         $this->makePacks();
     }
