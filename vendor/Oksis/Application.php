@@ -7,6 +7,8 @@ class Oksis_Application {
 
     protected $mode = self::DISPLAY_MODE_NORMAL;
 
+    protected $config = array();
+
     /**
      * @var Oksis_Application
      */
@@ -25,6 +27,25 @@ class Oksis_Application {
 
     protected function __construct()
     {
+        $this->setDisplayMode();
+        $this->loadConfig();
+    }
+
+    protected function loadConfig() {
+        $config = null;
+        include 'config.php';
+        if ($config == null) { die('Missing $config variable in config.php'); }
+        if (!isset($config['threadCount'])) { die('Missing "threadCount" parameter in config.php'); }
+        if (!isset($config['uploadPath'])) { die('Missing "uploadPath" parameter in config.php'); }
+
+        $this->config = $config;
+    }
+
+    public function getConfigValue($key) {
+        return $this->config[$key];
+    }
+
+    protected function setDisplayMode() {
         global $argv;
         if (in_array('-q', $argv)) {
             $this->mode = self::DISPLAY_MODE_QUIET;
@@ -36,10 +57,6 @@ class Oksis_Application {
     }
 
     public function doMain() {
-
-        $dir = __DIR__ . '/vendor';
-        $treadCount = 3;
-
         $output = array();
         $result = exec('php ./directory.php', $output); // create directories in another process because of libcurl inner bug
         $directories = json_decode($result, true);
@@ -49,7 +66,7 @@ class Oksis_Application {
 
         echo 'ALL DIRECTORIES CREATED at ' . date('Y-m-d H:i:s') . PHP_EOL;
 
-        $master = new Oksis_Master($dir, $treadCount);
+        $master = new Oksis_Master($this->getConfigValue('uploadPath'), $this->getConfigValue('treadCount'));
         $master->setDirectories($directories);
         $master->prepareFiles();
 
@@ -66,12 +83,7 @@ class Oksis_Application {
 
     public function doDirectory() {
 
-        $dir = __DIR__ . '/vendor';
-//$dir = '/var/www/firma-rukodelie.ru';
-
-        $treadCount = 3;
-
-        $master = new Oksis_Master($dir, $treadCount);
+        $master = new Oksis_Master($this->getConfigValue('uploadPath'), $this->getConfigValue('treadCount'));
         $directories = $master->createDirectories();
         exit(json_encode($directories));
     }
