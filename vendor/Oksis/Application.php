@@ -39,7 +39,7 @@ class Oksis_Application {
     protected function createSharedMemory() {
         if ($this->mode == self::DISPLAY_MODE_FULL) {
             $key = ftok(self::SHARED_MEMORY_PATHNAME, self::SHARED_MEMORY_PROJECT);
-            $this->sharedMemoryResource = shm_attach($key);
+            $this->sharedMemoryResource = shm_attach($key, 5*1024*1024);
         }
     }
 
