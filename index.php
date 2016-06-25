@@ -8,9 +8,12 @@ $dir = __DIR__ . '/vendor';
 $treadCount = 3;
 
 $master = new Oksis_Master($dir, $treadCount);
-//exit;
 $master->createDirectories();
-exit;
 echo 'ALL DIRECTORIES CREATED' . PHP_EOL;
+$forkId = $master->forkThreads();
+//if ($forkId != Oksis_Master::MASTER_FORK_ID) {
+    file_put_contents(__DIR__ . DIRECTORY_SEPARATOR . $forkId . '.txt', 'pid');
+//}
 
-$master->uploadFiles();
+
+//$master->uploadFiles();

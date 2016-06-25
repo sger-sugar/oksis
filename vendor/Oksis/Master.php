@@ -8,6 +8,9 @@ class Oksis_Master {
     protected $treadCount;
     protected $packs = array();
 
+    const MASTER_FORK_ID = 0;
+    protected $forkPids = array();
+
     const PACK_SIZE_FILES = 10;
 
     /**
@@ -92,5 +95,26 @@ class Oksis_Master {
 
     protected function makePacks() {
         $this->packs = array_chunk($this->files, Oksis_Master::PACK_SIZE_FILES, true);
+    }
+
+    public function forkThreads() {
+        if (sizeof($this->packs) < $this->treadCount) {
+            $this->treadCount = sizeof($this->packs);
+        }
+
+        for ($forkId = 1; $forkId < $this->treadCount+1; $forkId++) {
+            $pid = pcntl_fork();
+            if ($pid == -1) {
+                die('Could not fork. Install pcntl extension first.');
+            } else if ($pid) {
+                // we are the parent
+                pcntl_wait($status); //Protect against Zombie children
+                $this->forkPids[$forkId] = $pid;
+                return self::MASTER_FORK_ID;
+            } else {
+                // we are the child
+                return $forkId;
+            }
+        }
     }
 }
