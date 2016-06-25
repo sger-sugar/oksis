@@ -64,7 +64,15 @@ class Oksis_Application {
             exit($result);
         }
 
-        echo 'ALL DIRECTORIES CREATED at ' . date('Y-m-d H:i:s') . PHP_EOL;
+        if ($this->mode != self::DISPLAY_MODE_FULL) {
+            foreach ($directories as $directory => $id) {
+                echo $directories . ' uploaded with id=' . $id . PHP_EOL;
+            }
+        }
+
+        if ($this->mode != self::DISPLAY_MODE_QUIET) {
+            echo 'ALL DIRECTORIES CREATED at ' . date('Y-m-d H:i:s') . PHP_EOL;
+        }
 
         $master = new Oksis_Master($this->getConfigValue('uploadPath'), $this->getConfigValue('threadCount'));
         $master->setDirectories($directories);
@@ -74,7 +82,9 @@ class Oksis_Application {
         if ($forkId == Oksis_Master::MASTER_FORK_ID) {
             $status = null;
             pcntl_wait($status);
-            echo 'ALL FILES UPLOADED at ' . date('Y-m-d H:i:s') . PHP_EOL;
+            if ($this->mode != self::DISPLAY_MODE_QUIET) {
+                echo 'ALL FILES UPLOADED at ' . date('Y-m-d H:i:s') . PHP_EOL;
+            }
         } else {
             $log = $master->uploadFiles();
             file_put_contents($forkId . '.txt', $log);
