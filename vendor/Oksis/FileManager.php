@@ -12,17 +12,12 @@ class Oksis_FileManager {
     protected $forkPids = array();
     protected $forkId = -1;
 
-    const SHARED_MEMORY_PATHNAME = __FILE__;
-    const SHARED_MEMORY_PROJECT = 'o';
-
-    protected $sharedMemoryResource = null;
-
     /**
      * @var Oksis_GoogleFacade
      */
     protected $google;
 
-    public function __construct($path, $treadCount, $createSharedMemory=false)
+    public function __construct($path, $treadCount)
     {
         $this->treadCount = $treadCount;
 
@@ -33,11 +28,6 @@ class Oksis_FileManager {
         $this->indexDirectory($path);
 
         $this->google = new Oksis_GoogleFacade();
-
-        if ($createSharedMemory) {
-            $key = ftok(self::SHARED_MEMORY_PATHNAME, self::SHARED_MEMORY_PROJECT);
-            $this->sharedMemoryResource = shm_attach($key);
-        }
     }
 
     protected function indexDirectory($path) {
@@ -150,14 +140,5 @@ class Oksis_FileManager {
         }
         $this->forkId = self::MASTER_FORK_ID;
         return self::MASTER_FORK_ID;
-    }
-
-    public function __destruct()
-    {
-        if ($this->forkId == self::MASTER_FORK_ID) {
-            if (is_resource($this->sharedMemoryResource)) {
-                shm_remove($this->sharedMemoryResource);
-            }
-        }
     }
 }

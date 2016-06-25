@@ -5,6 +5,10 @@ class Oksis_Application {
     const DISPLAY_MODE_QUIET = 'q';
     const DISPLAY_MODE_FULL = 'f';
 
+    const SHARED_MEMORY_PATHNAME = __FILE__;
+    const SHARED_MEMORY_PROJECT = 'o';
+    protected $sharedMemoryResource = null;
+
     protected $mode = self::DISPLAY_MODE_NORMAL;
 
     protected $config = array();
@@ -29,6 +33,14 @@ class Oksis_Application {
     {
         $this->setDisplayMode();
         $this->loadConfig();
+        $this->createSharedMemory();
+    }
+
+    protected function createSharedMemory() {
+        if ($this->mode == self::DISPLAY_MODE_FULL) {
+            $key = ftok(self::SHARED_MEMORY_PATHNAME, self::SHARED_MEMORY_PROJECT);
+            $this->sharedMemoryResource = shm_attach($key);
+        }
     }
 
     protected function loadConfig() {
@@ -81,7 +93,7 @@ class Oksis_Application {
         }
 
         if ($this->mode != self::DISPLAY_MODE_QUIET) {
-            echo 'ALL DIRECTORIES ARE CREATED at ' . date('Y-m-d H:i:s') . PHP_EOL;
+            echo 'ALL DIRECTORIES WERE CREATED at ' . date('Y-m-d H:i:s') . PHP_EOL;
         }
 
         $master = new Oksis_FileManager(
@@ -97,8 +109,9 @@ class Oksis_Application {
             $status = null;
             pcntl_wait($status);
             if ($this->mode != self::DISPLAY_MODE_QUIET) {
-                echo 'ALL FILES ARE UPLOADED at ' . date('Y-m-d H:i:s') . PHP_EOL;
+                echo 'ALL FILES WERE UPLOADED at ' . date('Y-m-d H:i:s') . PHP_EOL;
             }
+            $this->destroySharedMemory();
         } else {
             $log = $master->uploadFiles();
             file_put_contents($forkId . '.txt', $log);
@@ -114,5 +127,12 @@ class Oksis_Application {
         );
         $directories = $master->createDirectories();
         exit(json_encode($directories));
+    }
+
+    protected function destroySharedMemory()
+    {
+        if (is_resource($this->sharedMemoryResource)) {
+            shm_remove($this->sharedMemoryResource);
+        }
     }
 }
