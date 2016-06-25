@@ -91,7 +91,7 @@ class Oksis_Master {
             $parentId = $this->directories[$parent];
             $id = $this->google->uploadFile($path, $parentId);
             $this->files[$path] = $id;
-            $log .= "$path uploaded" . PHP_EOL;
+            $log .= "$path uploaded at UTC " . date('Y-m-d H:i:s') . PHP_EOL;
         }
         return rtrim($log);
     }
