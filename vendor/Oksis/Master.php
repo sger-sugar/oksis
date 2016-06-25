@@ -10,7 +10,7 @@ class Oksis_Master {
 
     const MASTER_FORK_ID = 0;
     protected $forkPids = array();
-    protected $forkId;
+    protected $forkId = -1;
 
     const PACK_SIZE_FILES = 3;
 
@@ -33,7 +33,7 @@ class Oksis_Master {
 
         $this->google = new Oksis_GoogleFacade();
 
-        $key = ftok(__FILE__, 'Oksis');
+        $key = ftok(__FILE__, 'o');
         $this->sharedMemoryResource = shm_attach($key);
     }
 
