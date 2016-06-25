@@ -24,6 +24,7 @@ $forkId = $master->forkThreads();
 if ($forkId == Oksis_Master::MASTER_FORK_ID) {
     $status = null;
     pcntl_wait($status);
+    echo 'ALL FILES UPLOADED at ' . date('Y-m-d H:i:s') . PHP_EOL;
     file_put_contents(__DIR__ . DIRECTORY_SEPARATOR . $forkId . '.txt', 'pid');
 } else {
     $log = $master->uploadFiles();
