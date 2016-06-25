@@ -74,9 +74,9 @@ class Oksis_Application {
             exit($result);
         }
 
-        if ($this->mode != self::DISPLAY_MODE_FULL) {
+        if ($this->mode == self::DISPLAY_MODE_FULL) {
             foreach ($directories as $directory => $id) {
-                echo $directories . ' uploaded with id=' . $id . PHP_EOL;
+                echo $directory . ' uploaded with id=' . $id . PHP_EOL;
             }
         }
 
