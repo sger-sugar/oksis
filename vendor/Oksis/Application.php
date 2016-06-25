@@ -66,7 +66,7 @@ class Oksis_Application {
 
         echo 'ALL DIRECTORIES CREATED at ' . date('Y-m-d H:i:s') . PHP_EOL;
 
-        $master = new Oksis_Master($this->getConfigValue('uploadPath'), $this->getConfigValue('treadCount'));
+        $master = new Oksis_Master($this->getConfigValue('uploadPath'), $this->getConfigValue('threadCount'));
         $master->setDirectories($directories);
         $master->prepareFiles();
 
@@ -83,7 +83,7 @@ class Oksis_Application {
 
     public function doDirectory() {
 
-        $master = new Oksis_Master($this->getConfigValue('uploadPath'), $this->getConfigValue('treadCount'));
+        $master = new Oksis_Master($this->getConfigValue('uploadPath'), $this->getConfigValue('threadCount'));
         $directories = $master->createDirectories();
         exit(json_encode($directories));
     }
