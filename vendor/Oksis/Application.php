@@ -56,9 +56,19 @@ class Oksis_Application {
         }
     }
 
-    public function doMain() {
+    public function go() {
+        global $argv;
+        if (in_array('-d', $argv)) {
+            $this->doDirectory();
+        } else {
+            $this->doMain();
+        }
+    }
+
+    protected function doMain() {
         $output = array();
-        $result = exec('php ./directory.php', $output); // create directories in another process because of libcurl inner bug
+        $file = basename(__FILE__);
+        $result = exec('php ./' . $file . ' -d', $output); // create directories in another process because of libcurl inner bug
         $directories = json_decode($result, true);
         if (!is_array($directories)) {
             exit($result);
@@ -91,7 +101,7 @@ class Oksis_Application {
         }
     }
 
-    public function doDirectory() {
+    protected function doDirectory() {
 
         $master = new Oksis_Master($this->getConfigValue('uploadPath'), $this->getConfigValue('threadCount'));
         $directories = $master->createDirectories();
