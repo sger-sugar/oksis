@@ -11,9 +11,9 @@ $master = new Oksis_Master($dir, $treadCount);
 $master->createDirectories();
 echo 'ALL DIRECTORIES CREATED' . PHP_EOL;
 $forkId = $master->forkThreads();
-//if ($forkId != Oksis_Master::MASTER_FORK_ID) {
+if ($forkId == Oksis_Master::MASTER_FORK_ID) {
     file_put_contents(__DIR__ . DIRECTORY_SEPARATOR . $forkId . '.txt', 'pid');
-//}
-
-
-//$master->uploadFiles();
+} else {
+    $log = $master->uploadFiles();
+    file_put_contents(__DIR__ . DIRECTORY_SEPARATOR . $forkId . '.txt', $log);
+}

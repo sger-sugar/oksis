@@ -10,8 +10,9 @@ class Oksis_Master {
 
     const MASTER_FORK_ID = 0;
     protected $forkPids = array();
+    protected $forkId;
 
-    const PACK_SIZE_FILES = 10;
+    const PACK_SIZE_FILES = 3;
 
     /**
      * @var Oksis_GoogleFacade
@@ -76,14 +77,15 @@ class Oksis_Master {
     }
 
     public function uploadFiles() {
-
-        foreach($this->files as $path => $elementId) {
+        $log = '';
+        foreach($this->files[$this->forkId] as $path => $elementId) {
             $parent = dirname($path);
             $parentId = $this->directories[$parent];
             $id = $this->google->uploadFile($path, $parentId);
             $this->files[$path] = $id;
-            echo "$path uploaded" . PHP_EOL;
+            $log .= "$path uploaded" . PHP_EOL;
         }
+        return rtrim($log);
     }
 
     protected function fillFileDirectories() {
@@ -110,11 +112,13 @@ class Oksis_Master {
                 // we are the parent
                 pcntl_wait($status); //Protect against Zombie children
                 $this->forkPids[$forkId] = $pid;
-                return self::MASTER_FORK_ID;
             } else {
                 // we are the child
+                $this->forkId = $forkId;
                 return $forkId;
             }
         }
+        $this->forkId = self::MASTER_FORK_ID;
+        return self::MASTER_FORK_ID;
     }
 }
