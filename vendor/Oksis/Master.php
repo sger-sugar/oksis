@@ -78,7 +78,7 @@ class Oksis_Master {
 
     public function uploadFiles() {
         $log = '';
-        foreach($this->files[$this->forkId] as $path => $elementId) {
+        foreach($this->packs[$this->forkId] as $path => $elementId) {
             $parent = dirname($path);
             $parentId = $this->directories[$parent];
             $id = $this->google->uploadFile($path, $parentId);
