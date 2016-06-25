@@ -81,7 +81,7 @@ class Oksis_Application {
         }
 
         if ($this->mode != self::DISPLAY_MODE_QUIET) {
-            echo 'ALL DIRECTORIES CREATED at ' . date('Y-m-d H:i:s') . PHP_EOL;
+            echo 'ALL DIRECTORIES ARE CREATED at ' . date('Y-m-d H:i:s') . PHP_EOL;
         }
 
         $master = new Oksis_FileManager(
@@ -97,7 +97,7 @@ class Oksis_Application {
             $status = null;
             pcntl_wait($status);
             if ($this->mode != self::DISPLAY_MODE_QUIET) {
-                echo 'ALL FILES UPLOADED at ' . date('Y-m-d H:i:s') . PHP_EOL;
+                echo 'ALL FILES ARE UPLOADED at ' . date('Y-m-d H:i:s') . PHP_EOL;
             }
         } else {
             $log = $master->uploadFiles();
