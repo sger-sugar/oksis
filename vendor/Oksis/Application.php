@@ -96,11 +96,9 @@ class Oksis_Application {
             echo 'ALL DIRECTORIES WERE CREATED at ' . date('Y-m-d H:i:s') . PHP_EOL;
         }
 
-        $master = new Oksis_FileManager(
-            $this->getConfigValue('uploadPath'),
-            $this->getConfigValue('threadCount'),
-            $this->mode == self::DISPLAY_MODE_FULL
-        );
+        $threadCount = $this->getConfigValue('threadCount');
+
+        $master = new Oksis_FileManager($this->getConfigValue('uploadPath'), $threadCount);
         $master->setDirectories($directories);
         $master->prepareFiles();
 
@@ -108,13 +106,21 @@ class Oksis_Application {
         if ($forkId == Oksis_FileManager::MASTER_FORK_ID) {
             $status = null;
             pcntl_wait($status);
+            if ($this->mode == self::DISPLAY_MODE_FULL) {
+                for ($i = 1; $i <= $threadCount; $i++) {
+                    if (shm_has_var($this->sharedMemoryResource, $i)) {
+                        $log = shm_get_var($this->sharedMemoryResource, $i);
+                        echo $log . PHP_EOL;
+                    }
+                }
+            }
             if ($this->mode != self::DISPLAY_MODE_QUIET) {
                 echo 'ALL FILES WERE UPLOADED at ' . date('Y-m-d H:i:s') . PHP_EOL;
             }
             $this->destroySharedMemory();
         } else {
             $log = $master->uploadFiles();
-            file_put_contents($forkId . '.txt', $log);
+            shm_put_var($this->sharedMemoryResource, $forkId, $log);
         }
     }
 
@@ -122,8 +128,7 @@ class Oksis_Application {
 
         $master = new Oksis_FileManager(
             $this->getConfigValue('uploadPath'),
-            $this->getConfigValue('threadCount'),
-            $this->mode == self::DISPLAY_MODE_FULL
+            $this->getConfigValue('threadCount')
         );
         $directories = $master->createDirectories();
         exit(json_encode($directories));
