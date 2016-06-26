@@ -87,9 +87,14 @@ class Oksis_FileManager {
         foreach($this->packs[$this->forkId] as $path => $elementId) {
             $parent = dirname($path);
             $parentId = $this->directories[$parent];
-            $id = $this->google->uploadFile($path, $parentId);
-            $this->files[$path] = $id;
-            $log .= "$path uploaded at UTC " . date('Y-m-d H:i:s') . PHP_EOL;
+            try {
+                $id = $this->google->uploadFile($path, $parentId);
+                $this->files[$path] = $id;
+                $log .= "$path uploaded at UTC " . date('Y-m-d H:i:s') . PHP_EOL;
+            } catch (Exception $e) {
+                $log .= $e->getMessage() . PHP_EOL;
+                $log .= $e->getTraceAsString() . PHP_EOL;
+            }
         }
         return rtrim($log);
     }

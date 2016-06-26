@@ -5,7 +5,7 @@ set_time_limit(0);
 require_once __DIR__ . '/vendor/autoload.php';
 
 define('APPLICATION_NAME', 'Drive API PHP Quickstart');
-define('CREDENTIALS_PATH', '~/.credentials/drive-php-quickstart.json');
+define('CREDENTIALS_PATH', '~/.credentials/oksis.json');
 define('CLIENT_SECRET_PATH', __DIR__ . '/client_secret.json');
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/drive-php-quickstart.json
@@ -48,6 +48,8 @@ function getClient() {
         }
         file_put_contents($credentialsPath, $accessToken);
         printf("Credentials saved to %s\n", $credentialsPath);
+        echo 'Call the script again to export data' . PHP_EOL;
+        exit;
     }
     $client->setAccessToken($accessToken);
 
