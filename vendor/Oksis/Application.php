@@ -31,9 +31,14 @@ class Oksis_Application {
 
     protected function __construct()
     {
+        $this->checkHasAccess();
         $this->setDisplayMode();
         $this->loadConfig();
         $this->createSharedMemory();
+    }
+
+    protected function checkHasAccess() {
+        getClient();
     }
 
     protected function createSharedMemory() {
