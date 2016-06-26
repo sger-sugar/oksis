@@ -125,7 +125,9 @@ class Oksis_Application {
             $this->destroySharedMemory();
         } else {
             $log = $master->uploadFiles();
-            shm_put_var($this->sharedMemoryResource, $forkId, $log);
+            if ($this->mode == self::DISPLAY_MODE_FULL) {
+                shm_put_var($this->sharedMemoryResource, $forkId, $log);
+            }
         }
     }
 
